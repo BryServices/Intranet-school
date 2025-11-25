@@ -1,0 +1,13 @@
+{
+  "name": "Intranet Étudiants - Université XYZ",
+  "short_name": "Intranet XYZ",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#0A66C2",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "https://picsum.photos/192/192", "sizes": "192x192", "type": "image/png", "purpose": "maskable any" },
+    { "src": "https://picsum.photos/512/512", "sizes": "512x512", "type": "image/png", "purpose": "maskable any" }
+  ]
+}
