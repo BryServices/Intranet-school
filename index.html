@@ -9,6 +9,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind via CDN pour simplifier le build sans config PostCSS complexe, 
+         mais en production réelle il est recommandé de l'installer via npm -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -58,19 +60,22 @@
         scrollbar-width: none;
       }
     </style>
-  <script type="importmap">
+<script type="importmap">
 {
   "imports": {
-    "framer-motion": "https://aistudiocdn.com/framer-motion@^12.23.24",
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1",
+    "vite": "https://aistudiocdn.com/vite@^7.2.4",
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
     "react": "https://aistudiocdn.com/react@^19.2.0",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0"
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+    "framer-motion": "https://aistudiocdn.com/framer-motion@^12.23.24"
   }
 }
 </script>
 </head>
   <body class="bg-bgLight dark:bg-bgDark text-textMainLight dark:text-textMainDark transition-colors duration-300">
     <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
   </body>
 </html>
