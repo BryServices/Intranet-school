@@ -13,6 +13,7 @@ interface HomeScreenProps {
   onOpenAnnouncements: () => void;
   onOpenStudentCard: () => void;
   onOpenAbsences: () => void;
+  onOpenAlerts: () => void;
 }
 
 const ANNOUNCEMENTS: Announcement[] = [
@@ -49,9 +50,10 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     onOpenCalendar, 
     onOpenAnnouncements,
     onOpenStudentCard,
-    onOpenAbsences
+    onOpenAbsences,
+    onOpenAlerts
 }) => {
-  const { user, notifications } = useApp();
+  const { user, unreadCount } = useApp();
 
   if (!user) return null;
 
@@ -85,9 +87,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
                 <span className="text-xs font-bold">Ma Carte</span>
             </button>
 
-            <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-textMainLight dark:text-textMainDark relative">
+            <button 
+                onClick={onOpenAlerts}
+                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-textMainLight dark:text-textMainDark relative"
+            >
                 <Bell size={24} />
-                {notifications > 0 && (
+                {unreadCount > 0 && (
                 <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white dark:border-black animate-pulse" />
                 )}
             </button>

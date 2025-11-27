@@ -11,6 +11,7 @@ import CalendarScreen from './screens/CalendarScreen';
 import AnnouncementsScreen from './screens/AnnouncementsScreen';
 import StudentCardScreen from './screens/StudentCardScreen';
 import AbsencesScreen from './screens/AbsencesScreen';
+import AlertsScreen from './screens/AlertsScreen';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const MainLayout = () => {
@@ -21,6 +22,7 @@ const MainLayout = () => {
   const [isGradesOpen, setIsGradesOpen] = useState(false);
   const [isStudentCardOpen, setIsStudentCardOpen] = useState(false);
   const [isAbsencesOpen, setIsAbsencesOpen] = useState(false);
+  const [isAlertsOpen, setIsAlertsOpen] = useState(false);
 
   if (!user) {
     return <LoginScreen />;
@@ -38,6 +40,7 @@ const MainLayout = () => {
                 onOpenAnnouncements={() => setCurrentTab('announcements')}
                 onOpenStudentCard={() => setIsStudentCardOpen(true)}
                 onOpenAbsences={() => setIsAbsencesOpen(true)}
+                onOpenAlerts={() => setIsAlertsOpen(true)}
             />
         );
       case 'calendar':
@@ -54,6 +57,7 @@ const MainLayout = () => {
                 onOpenAnnouncements={() => setCurrentTab('announcements')}
                 onOpenStudentCard={() => setIsStudentCardOpen(true)}
                 onOpenAbsences={() => setIsAbsencesOpen(true)}
+                onOpenAlerts={() => setIsAlertsOpen(true)}
             />
         );
     }
@@ -93,6 +97,7 @@ const MainLayout = () => {
         {isGradesOpen && <GradesScreen key="grades" onBack={() => setIsGradesOpen(false)} />}
         {isStudentCardOpen && <StudentCardScreen key="card" onClose={() => setIsStudentCardOpen(false)} />}
         {isAbsencesOpen && <AbsencesScreen key="absences" onBack={() => setIsAbsencesOpen(false)} />}
+        {isAlertsOpen && <AlertsScreen key="alerts" onBack={() => setIsAlertsOpen(false)} />}
       </AnimatePresence>
     </div>
   );

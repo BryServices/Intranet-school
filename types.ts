@@ -45,5 +45,14 @@ export interface Absence {
   justificationUrl?: string;
 }
 
+export interface AppNotification {
+  id: string;
+  title: string;
+  message: string;
+  date: string; // "Il y a 2 min"
+  type: 'GRADE' | 'ADMIN' | 'EVENT' | 'CHAT' | 'CALENDAR';
+  read: boolean;
+}
+
 export type Theme = 'light' | 'dark';
 export type Language = 'fr' | 'en' | 'es' | 'de';

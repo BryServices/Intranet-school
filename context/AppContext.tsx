@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User, Theme, Language } from '../types';
+import { User, Theme, Language, AppNotification } from '../types';
 
 interface AppContextType {
   user: User | null;
@@ -11,8 +11,10 @@ interface AppContextType {
   toggleTheme: () => void;
   language: Language;
   setLanguage: (lang: Language) => void;
-  notifications: number;
-  clearNotifications: () => void;
+  notifications: AppNotification[];
+  unreadCount: number;
+  markAllAsRead: () => void;
+  deleteNotification: (id: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -33,14 +35,48 @@ const DUMMY_USER: User = {
   rank: '3ème',
 };
 
+const DUMMY_NOTIFICATIONS: AppNotification[] = [
+  {
+    id: '1',
+    title: 'Nouvelle note disponible',
+    message: 'Votre note en Algorithmique Avancée a été publiée : 16.5/20',
+    date: 'Il y a 10 min',
+    type: 'GRADE',
+    read: false,
+  },
+  {
+    id: '2',
+    title: 'Changement de salle',
+    message: 'Le cours de Droit du Numérique de 14h aura lieu en Salle 204.',
+    date: 'Il y a 1h',
+    type: 'CALENDAR',
+    read: false,
+  },
+  {
+    id: '3',
+    title: 'Rappel : Justificatif',
+    message: 'N\'oubliez pas de justifier votre absence du 14 Octobre.',
+    date: 'Hier',
+    type: 'ADMIN',
+    read: true,
+  },
+  {
+    id: '4',
+    title: 'Soirée BDE',
+    message: 'La billetterie pour la soirée d\'intégration est ouverte !',
+    date: 'Hier',
+    type: 'EVENT',
+    read: true,
+  }
+];
+
 export const AppProvider = ({ children }: { children?: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [theme, setTheme] = useState<Theme>('light'); // Default state is light
+  const [theme, setTheme] = useState<Theme>('light');
   const [language, setLanguageState] = useState<Language>('fr');
-  const [notifications, setNotifications] = useState(3);
+  const [notifications, setNotifications] = useState<AppNotification[]>(DUMMY_NOTIFICATIONS);
 
   useEffect(() => {
-    // Check stored preferences
     const storedTheme = localStorage.getItem('theme') as Theme;
     if (storedTheme) {
       setTheme(storedTheme);
@@ -68,7 +104,6 @@ export const AppProvider = ({ children }: { children?: ReactNode }) => {
   };
 
   const login = (matricule: string) => {
-    // Simulate login
     setTimeout(() => {
         setUser(DUMMY_USER);
     }, 500);
@@ -81,7 +116,6 @@ export const AppProvider = ({ children }: { children?: ReactNode }) => {
   const updateUser = (data: Partial<User>) => {
     if (user) {
         const updatedUser = { ...user, ...data };
-        // Update fullName automatically if names change
         if (data.firstName || data.lastName) {
             updatedUser.fullName = `${updatedUser.firstName} ${updatedUser.lastName}`;
         }
@@ -93,10 +127,31 @@ export const AppProvider = ({ children }: { children?: ReactNode }) => {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
   };
 
-  const clearNotifications = () => setNotifications(0);
+  const markAllAsRead = () => {
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  };
+
+  const deleteNotification = (id: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== id));
+  };
+
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
-    <AppContext.Provider value={{ user, login, logout, updateUser, theme, toggleTheme, language, setLanguage, notifications, clearNotifications }}>
+    <AppContext.Provider value={{ 
+      user, 
+      login, 
+      logout, 
+      updateUser, 
+      theme, 
+      toggleTheme, 
+      language, 
+      setLanguage, 
+      notifications, 
+      unreadCount, 
+      markAllAsRead, 
+      deleteNotification 
+    }}>
       {children}
     </AppContext.Provider>
   );
