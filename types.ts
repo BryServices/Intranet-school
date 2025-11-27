@@ -1,3 +1,4 @@
+
 export interface User {
   id: string;
   matricule: string;
@@ -32,6 +33,16 @@ export interface ChatMessage {
   timestamp: Date;
   isMe: boolean;
   avatarUrl?: string;
+}
+
+export interface Absence {
+  id: string;
+  date: string;
+  subject: string;
+  type: 'CM' | 'TD' | 'TP';
+  duration: string; // "2h"
+  status: 'JUSTIFIED' | 'UNJUSTIFIED' | 'PENDING';
+  justificationUrl?: string;
 }
 
 export type Theme = 'light' | 'dark';

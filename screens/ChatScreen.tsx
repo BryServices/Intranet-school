@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send, Paperclip, MoreVertical } from 'lucide-react';
@@ -16,7 +17,7 @@ const DUMMY_MESSAGES: ChatMessage[] = [
     senderName: 'Sarah L.',
     timestamp: new Date(Date.now() - 3600000),
     isMe: false,
-    avatarUrl: 'https://picsum.photos/seed/sarah/50'
+    avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=50&h=50&fit=crop'
   },
   {
     id: '2',
@@ -25,7 +26,7 @@ const DUMMY_MESSAGES: ChatMessage[] = [
     senderName: 'Thomas B.',
     timestamp: new Date(Date.now() - 1800000),
     isMe: false,
-    avatarUrl: 'https://picsum.photos/seed/thomas/50'
+    avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=50&h=50&fit=crop'
   },
   {
     id: '3',
@@ -85,7 +86,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ onClose }) => {
             <div className="flex items-center gap-3">
                 <div className="relative">
                     <img 
-                        src="https://picsum.photos/seed/class/100" 
+                        src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=100&h=100&fit=crop" 
                         className="w-10 h-10 rounded-full border border-borderLight dark:border-borderDark"
                         alt="Class Group"
                     />

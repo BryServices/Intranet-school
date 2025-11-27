@@ -1,7 +1,7 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, TrendingUp, TrendingDown, Award, Calendar, AlertCircle, FileText, CheckCircle2 } from 'lucide-react';
+import { ChevronLeft, TrendingUp, TrendingDown, Award, Calendar, AlertCircle, FileText, CheckCircle2, Download, Loader2, Check, FileSignature, ShieldCheck, Clock } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 interface GradesScreenProps {
@@ -26,6 +26,9 @@ type Evaluation = {
   coef: number;
   classAverage: number;
 };
+
+// Simulation d'états pour le processus de demande
+type RequestStatus = 'idle' | 'requesting' | 'pending_signature' | 'ready';
 
 const SEMESTERS = {
   S1: [
@@ -97,6 +100,14 @@ const GradesScreen: React.FC<GradesScreenProps> = ({ onBack }) => {
   const { user } = useApp();
   const [semester, setSemester] = useState<'S1' | 'S2'>('S1');
   const [selectedSubject, setSelectedSubject] = useState<Grade | null>(null);
+  
+  // États pour le processus de demande
+  const [requestStatus, setRequestStatus] = useState<RequestStatus>('idle');
+
+  // Reset le status si on change de semestre (pour la démo)
+  useEffect(() => {
+    setRequestStatus('idle');
+  }, [semester]);
 
   const currentGrades = SEMESTERS[semester];
   const average = (currentGrades.reduce((acc, curr) => acc + (curr.value * curr.coef), 0) / currentGrades.reduce((acc, curr) => acc + curr.coef, 0)).toFixed(2);
@@ -121,8 +132,38 @@ const GradesScreen: React.FC<GradesScreenProps> = ({ onBack }) => {
       return <AlertCircle size={16} />;
   };
 
-  // Improved calculation to prevent bars from being 0 height or overflowing
   const getBarHeight = (grade: number) => `${Math.max(5, (grade / 20) * 100)}%`;
+
+  const handleRequestBulletin = () => {
+    if (requestStatus !== 'idle') return;
+    
+    // Étape 1 : Envoi de la demande
+    setRequestStatus('requesting');
+    
+    setTimeout(() => {
+        // Étape 2 : Simulation attente signature direction
+        setRequestStatus('pending_signature');
+        
+        // Simulation validation automatique après quelques secondes (Pour la démo UX)
+        setTimeout(() => {
+            setRequestStatus('ready');
+        }, 4000); // 4 secondes d'attente "administrative"
+    }, 1500);
+  };
+
+  const handleDownload = () => {
+    // Création d'un faux fichier
+    const dummyContent = `BULLETIN OFFICIEL - SEMESTRE ${semester}\n\nÉtudiant: ${user?.fullName}\nMatricule: ${user?.matricule}\nMoyenne Générale: ${average}/20\n\nSignature Direction: [SIGNATURE_NUMERIQUE_VALIDE]\nDate: ${new Date().toLocaleDateString()}`;
+    const blob = new Blob([dummyContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Bulletin_Officiel_${semester}_${user?.matricule}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const SubjectDetails = ({ subject, onClose }: { subject: Grade; onClose: () => void }) => {
     const evaluations = getEvaluationsForSubject(subject);
@@ -248,7 +289,7 @@ const GradesScreen: React.FC<GradesScreenProps> = ({ onBack }) => {
 
         <div className="p-4 max-w-md mx-auto space-y-6">
             
-            {/* Semester Switcher - Increased hit area */}
+            {/* Semester Switcher */}
             <div className="bg-white dark:bg-surfaceDark p-1.5 rounded-2xl flex shadow-sm border border-gray-100 dark:border-white/5">
                 {(['S1', 'S2'] as const).map((s) => (
                     <button
@@ -266,7 +307,7 @@ const GradesScreen: React.FC<GradesScreenProps> = ({ onBack }) => {
                 ))}
             </div>
 
-            {/* Summary Card */}
+            {/* Summary Card (Sans bouton download) */}
             <motion.div 
                 key={semester}
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -276,6 +317,7 @@ const GradesScreen: React.FC<GradesScreenProps> = ({ onBack }) => {
                  <div className="absolute top-0 right-0 p-6 opacity-5 dark:opacity-10">
                     <Award size={120} />
                 </div>
+                
                 <div className="relative z-10 flex flex-col items-center">
                     <span className="text-textSecLight dark:text-textSecDark font-medium mb-1">Moyenne Générale</span>
                     <div className="flex items-baseline gap-2">
@@ -289,7 +331,7 @@ const GradesScreen: React.FC<GradesScreenProps> = ({ onBack }) => {
                 </div>
             </motion.div>
 
-            {/* Bar Chart Visualisation - Redesigned for A11y */}
+            {/* Bar Chart Visualisation */}
             <div className="bg-white dark:bg-surfaceDark rounded-3xl p-6 shadow-soft">
                 <div className="flex justify-between items-center mb-6">
                     <h3 className="font-bold text-textMainLight dark:text-textMainDark">Performance</h3>
@@ -313,7 +355,6 @@ const GradesScreen: React.FC<GradesScreenProps> = ({ onBack }) => {
                             className="flex flex-col items-center flex-1 gap-2 group cursor-pointer focus:outline-none"
                             aria-label={`Voir détails pour ${grade.subject}. Note: ${grade.value}/20`}
                          >
-                            {/* Value outside bar for readability */}
                             <span className={`text-sm font-bold transition-transform group-hover:-translate-y-1 ${getGradeColor(grade.value)}`}>
                                 {grade.value}
                             </span>
@@ -326,7 +367,6 @@ const GradesScreen: React.FC<GradesScreenProps> = ({ onBack }) => {
                                     className={`w-full relative ${getBarColor(grade.value)} opacity-90 group-hover:opacity-100 transition-opacity`}
                                 >
                                 </motion.div>
-                                {/* Class Average Line */}
                                 <div 
                                     className="absolute w-full border-t border-dashed border-gray-500/60 z-10"
                                     style={{ bottom: getBarHeight(grade.average) }}
@@ -376,6 +416,98 @@ const GradesScreen: React.FC<GradesScreenProps> = ({ onBack }) => {
                     </motion.button>
                 ))}
             </div>
+
+             {/* Documents Officiels Section */}
+             <div className="pt-4 pb-8">
+                 <h3 className="font-bold text-textMainLight dark:text-textMainDark px-2 mb-3">Documents Officiels</h3>
+                 
+                 <div className="bg-white dark:bg-surfaceDark rounded-3xl p-6 shadow-soft border border-gray-100 dark:border-white/5">
+                    <div className="flex items-start gap-4 mb-4">
+                        <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 rounded-2xl flex items-center justify-center text-primary flex-shrink-0">
+                            <FileSignature size={24} />
+                        </div>
+                        <div>
+                            <h4 className="font-bold text-textMainLight dark:text-textMainDark text-sm">Bulletin de notes certifié</h4>
+                            <p className="text-xs text-textSecLight dark:text-textSecDark mt-1 leading-relaxed">
+                                Ce document nécessite une validation par la direction des études. Le délai moyen est de 24h.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="bg-gray-50 dark:bg-black/20 rounded-xl p-3 mb-4 space-y-3">
+                        {/* Status Timeline */}
+                        <div className="flex items-center justify-between text-xs px-2">
+                             <div className="flex flex-col items-center gap-1 opacity-100">
+                                <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                                <span className="font-medium">Demande</span>
+                             </div>
+                             <div className={`h-px flex-1 mx-2 ${requestStatus !== 'idle' ? 'bg-green-500' : 'bg-gray-300 dark:bg-white/10'}`} />
+                             
+                             <div className={`flex flex-col items-center gap-1 ${['pending_signature', 'ready'].includes(requestStatus) ? 'opacity-100' : 'opacity-40'}`}>
+                                <div className={`w-2 h-2 rounded-full ${['pending_signature', 'ready'].includes(requestStatus) ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`}></div>
+                                <span className="font-medium">Signature</span>
+                             </div>
+                             
+                             <div className={`h-px flex-1 mx-2 ${requestStatus === 'ready' ? 'bg-green-500' : 'bg-gray-300 dark:bg-white/10'}`} />
+                             
+                             <div className={`flex flex-col items-center gap-1 ${requestStatus === 'ready' ? 'opacity-100' : 'opacity-40'}`}>
+                                <div className={`w-2 h-2 rounded-full ${requestStatus === 'ready' ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`}></div>
+                                <span className="font-medium">Prêt</span>
+                             </div>
+                        </div>
+                    </div>
+
+                    {/* Action Button based on status */}
+                    <AnimatePresence mode="wait">
+                        {requestStatus === 'idle' && (
+                            <motion.button
+                                key="request"
+                                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                                onClick={handleRequestBulletin}
+                                className="w-full h-12 bg-primary text-white rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20"
+                            >
+                                <FileText size={18} />
+                                Demander l'édition du bulletin
+                            </motion.button>
+                        )}
+
+                        {requestStatus === 'requesting' && (
+                            <motion.div
+                                key="loading"
+                                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                                className="w-full h-12 bg-gray-100 dark:bg-white/5 text-textSecLight dark:text-textSecDark rounded-xl font-medium text-sm flex items-center justify-center gap-2"
+                            >
+                                <Loader2 size={18} className="animate-spin text-primary" />
+                                Traitement de la demande...
+                            </motion.div>
+                        )}
+
+                        {requestStatus === 'pending_signature' && (
+                             <motion.div
+                                key="pending"
+                                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                                className="w-full h-12 bg-orange-50 dark:bg-orange-900/10 text-orange-600 dark:text-orange-400 rounded-xl font-medium text-sm flex items-center justify-center gap-2 border border-orange-100 dark:border-orange-900/20"
+                            >
+                                <Clock size={18} />
+                                En cours de signature (Direction)
+                            </motion.div>
+                        )}
+
+                        {requestStatus === 'ready' && (
+                            <motion.button
+                                key="download"
+                                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                                onClick={handleDownload}
+                                className="w-full h-12 bg-green-600 text-white rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:bg-green-700 transition-colors shadow-lg shadow-green-600/20"
+                            >
+                                <ShieldCheck size={18} />
+                                Télécharger le bulletin officiel
+                            </motion.button>
+                        )}
+                    </AnimatePresence>
+
+                 </div>
+             </div>
 
             <div className="h-6" /> {/* Spacer */}
 

@@ -24,7 +24,7 @@ const DUMMY_USER: User = {
   lastName: 'Dupont',
   fullName: 'Alexandre Dupont',
   bio: 'Passionné par le développement web et l’IA.',
-  avatarUrl: 'https://picsum.photos/seed/alex/200',
+  avatarUrl: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=200&h=200&fit=crop',
   level: 'Master 1',
   major: 'Informatique',
   option: 'Génie Logiciel',

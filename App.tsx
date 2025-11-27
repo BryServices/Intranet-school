@@ -9,6 +9,8 @@ import SettingsScreen from './screens/SettingsScreen';
 import GradesScreen from './screens/GradesScreen';
 import CalendarScreen from './screens/CalendarScreen';
 import AnnouncementsScreen from './screens/AnnouncementsScreen';
+import StudentCardScreen from './screens/StudentCardScreen';
+import AbsencesScreen from './screens/AbsencesScreen';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const MainLayout = () => {
@@ -17,6 +19,8 @@ const MainLayout = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isGradesOpen, setIsGradesOpen] = useState(false);
+  const [isStudentCardOpen, setIsStudentCardOpen] = useState(false);
+  const [isAbsencesOpen, setIsAbsencesOpen] = useState(false);
 
   if (!user) {
     return <LoginScreen />;
@@ -32,6 +36,8 @@ const MainLayout = () => {
                 onOpenGrades={() => setIsGradesOpen(true)}
                 onOpenCalendar={() => setCurrentTab('calendar')}
                 onOpenAnnouncements={() => setCurrentTab('announcements')}
+                onOpenStudentCard={() => setIsStudentCardOpen(true)}
+                onOpenAbsences={() => setIsAbsencesOpen(true)}
             />
         );
       case 'calendar':
@@ -46,6 +52,8 @@ const MainLayout = () => {
                 onOpenGrades={() => setIsGradesOpen(true)}
                 onOpenCalendar={() => setCurrentTab('calendar')}
                 onOpenAnnouncements={() => setCurrentTab('announcements')}
+                onOpenStudentCard={() => setIsStudentCardOpen(true)}
+                onOpenAbsences={() => setIsAbsencesOpen(true)}
             />
         );
     }
@@ -83,6 +91,8 @@ const MainLayout = () => {
         {isChatOpen && <ChatScreen key="chat" onClose={() => setIsChatOpen(false)} />}
         {isSettingsOpen && <SettingsScreen key="settings" onBack={() => setIsSettingsOpen(false)} />}
         {isGradesOpen && <GradesScreen key="grades" onBack={() => setIsGradesOpen(false)} />}
+        {isStudentCardOpen && <StudentCardScreen key="card" onClose={() => setIsStudentCardOpen(false)} />}
+        {isAbsencesOpen && <AbsencesScreen key="absences" onBack={() => setIsAbsencesOpen(false)} />}
       </AnimatePresence>
     </div>
   );

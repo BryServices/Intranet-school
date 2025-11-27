@@ -26,7 +26,7 @@ const ANNOUNCEMENTS_DATA: Announcement[] = [
     rawDate: new Date(2025, 6, 15),
     description: 'La cérémonie officielle aura lieu le 15 Juillet au grand amphithéâtre. Les inscriptions pour les invités sont ouvertes.',
     content: `Chers étudiants,\n\nNous avons le plaisir de vous annoncer que la cérémonie de remise des diplômes de la promotion 2024 se tiendra le vendredi 15 juillet à partir de 14h00 dans le Grand Amphithéâtre.\n\nProgramme de la journée :\n- 13h30 : Accueil des diplômés et émargement\n- 14h00 : Discours d'ouverture du Directeur\n- 14h30 : Appel des diplômés par filière\n- 16h30 : Cocktail de clôture dans le hall principal\n\nChaque étudiant peut inviter jusqu'à 2 personnes. Veuillez confirmer votre présence et inscrire vos invités via le formulaire envoyé par mail avant le 30 juin.\n\nUne tenue correcte est exigée (toge fournie sur place).`,
-    imageUrl: 'https://picsum.photos/seed/diploma/800/600',
+    imageUrl: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=600&fit=crop',
     important: true,
   },
   {
@@ -46,7 +46,7 @@ const ANNOUNCEMENTS_DATA: Announcement[] = [
     rawDate: new Date(2025, 9, 10),
     description: "Rejoignez l'équipe universitaire pour la préparation de la Coupe de France de Robotique !",
     content: `Le Club Robotique recrute ses nouveaux membres pour la saison 2025 !\n\nObjectif : La Coupe de France de Robotique.\nThème de l'année : "The Cherry on the Cake".\n\nNous recherchons des profils variés :\n- Mécanique & Conception 3D\n- Électronique embarquée\n- Programmation (C++, Python)\n- Communication & Gestion de projet\n\nPremière réunion d'information ce jeudi à 18h en salle 204. Venez nombreux !`,
-    imageUrl: 'https://picsum.photos/seed/robot/800/400',
+    imageUrl: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=800&h=400&fit=crop',
   },
   {
     id: '4',
@@ -334,6 +334,7 @@ const AnnouncementsScreen: React.FC = () => {
                     >
                         {/* Date Badge */}
                         <div className="flex-shrink-0 w-14 h-16 bg-gray-50 dark:bg-white/5 rounded-2xl flex flex-col items-center justify-center border border-gray-100 dark:border-white/5 group-hover:border-primary/20 transition-colors" aria-label={`Publié le ${ann.date}`}>
+                            <span className="text-lg font-bold text-textMainLight dark:text-textMainDark leading-none mb-0.5">{day}</span>
                             <span className="text-lg font-bold text-textMainLight dark:text-textMainDark leading-none mb-0.5">{day}</span>
                             <span className="text-[10px] font-bold text-textSecLight dark:text-textSecDark uppercase">{month}</span>
                         </div>

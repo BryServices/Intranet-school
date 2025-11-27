@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Camera, Settings, Bell, MessageCircle, Trophy, Sparkles, Clock, ArrowRight } from 'lucide-react';
+import { Camera, Settings, Bell, MessageCircle, Trophy, Sparkles, Clock, ArrowRight, TrendingUp, CreditCard, AlertCircle } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { Announcement } from '../types';
 
@@ -11,6 +11,8 @@ interface HomeScreenProps {
   onOpenGrades: () => void;
   onOpenCalendar: () => void;
   onOpenAnnouncements: () => void;
+  onOpenStudentCard: () => void;
+  onOpenAbsences: () => void;
 }
 
 const ANNOUNCEMENTS: Announcement[] = [
@@ -45,30 +47,51 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     onOpenSettings, 
     onOpenGrades, 
     onOpenCalendar, 
-    onOpenAnnouncements 
+    onOpenAnnouncements,
+    onOpenStudentCard,
+    onOpenAbsences
 }) => {
   const { user, notifications } = useApp();
 
   if (!user) return null;
+
+  // Calcul pour le cercle de progression
+  const radius = 36;
+  const circumference = 2 * Math.PI * radius;
+  const progress = (user.gpa / 20) * 100;
+  const strokeDashoffset = circumference - (progress / 100) * circumference;
 
   return (
     <div className="pb-32 pt-20 px-4 max-w-md mx-auto">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-40 backdrop-blur-md bg-white/50 dark:bg-black/50 border-b border-white/5">
         <div className="max-w-md mx-auto px-4 h-16 flex items-center justify-between">
-          <button 
-            onClick={onOpenSettings}
-            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-textMainLight dark:text-textMainDark"
-          >
-            <Settings size={24} />
-          </button>
+          <div className="flex items-center gap-2">
+              <button 
+                onClick={onOpenSettings}
+                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-textMainLight dark:text-textMainDark"
+              >
+                <Settings size={24} />
+              </button>
+          </div>
           
-          <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-textMainLight dark:text-textMainDark relative">
-            <Bell size={24} />
-            {notifications > 0 && (
-              <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white dark:border-black animate-pulse" />
-            )}
-          </button>
+          <div className="flex items-center gap-2">
+            {/* Quick Access e-Card */}
+            <button 
+                onClick={onOpenStudentCard}
+                className="flex items-center gap-2 bg-primary/10 hover:bg-primary/20 text-primary px-3 py-1.5 rounded-full transition-colors active:scale-95"
+            >
+                <CreditCard size={18} />
+                <span className="text-xs font-bold">Ma Carte</span>
+            </button>
+
+            <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-textMainLight dark:text-textMainDark relative">
+                <Bell size={24} />
+                {notifications > 0 && (
+                <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white dark:border-black animate-pulse" />
+                )}
+            </button>
+          </div>
         </div>
       </header>
 
@@ -117,60 +140,110 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
           </div>
         </motion.div>
 
-        {/* Stats Row */}
+        {/* Scolarité Grid */}
         <div className="grid grid-cols-2 gap-4">
+            {/* Absences Card (New) */}
+            <motion.button
+                onClick={onOpenAbsences}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileTap={{ scale: 0.96 }}
+                transition={{ delay: 0.05 }}
+                className="bg-white dark:bg-surfaceDark p-4 rounded-3xl shadow-soft flex flex-col items-center justify-center gap-2 group relative overflow-hidden h-[180px]"
+            >
+                <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                    <AlertCircle size={80} />
+                </div>
+                
+                <div className="relative w-16 h-16">
+                    <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                        <path className="text-gray-100 dark:text-white/5" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3" />
+                        <path className="text-orange-500" strokeDasharray="94, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center flex-col">
+                         <span className="text-lg font-bold text-orange-500">6.5h</span>
+                    </div>
+                </div>
+                
+                <span className="text-sm font-bold text-textMainLight dark:text-textMainDark mt-1">Absences</span>
+                <span className="text-[10px] text-orange-500 font-medium bg-orange-50 dark:bg-orange-900/10 px-2 py-0.5 rounded-full">1 à justifier</span>
+            </motion.button>
+
+            {/* GPA Card - Redesigned */}
             <motion.button 
                 onClick={onOpenGrades}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
                 whileTap={{ scale: 0.96 }}
-                className="bg-primary text-white p-5 rounded-3xl shadow-soft relative overflow-hidden text-left group"
+                className="bg-gradient-to-br from-primary to-blue-600 text-white p-4 rounded-3xl shadow-soft relative overflow-hidden text-center group flex flex-col items-center justify-between h-[180px]"
             >
-                <div className="absolute top-0 right-0 p-4 opacity-20 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
-                    <Trophy size={48} />
+                <div className="flex items-center justify-between w-full mb-1 z-10">
+                    <span className="text-xs font-medium text-white/80">Moyenne</span>
+                    <div className="flex items-center gap-1 bg-white/20 px-1.5 py-0.5 rounded-md text-[10px] font-bold">
+                        <TrendingUp size={10} />
+                        <span>+0.5</span>
+                    </div>
                 </div>
-                <p className="text-primary-100 text-sm font-medium mb-1">Moyenne Gen.</p>
-                <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-bold">{user.gpa}</span>
-                    <span className="text-sm opacity-80">/20</span>
+
+                {/* Circular Progress */}
+                <div className="relative w-20 h-20 flex items-center justify-center z-10">
+                    <svg className="w-full h-full -rotate-90" viewBox="0 0 88 88">
+                        <circle cx="44" cy="44" r={radius} fill="none" stroke="currentColor" strokeWidth="6" className="text-white/20" />
+                        <circle cx="44" cy="44" r={radius} fill="none" stroke="currentColor" strokeWidth="6" strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} className="text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]" />
+                    </svg>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <span className="text-2xl font-bold leading-none tracking-tighter">
+                            {Math.floor(user.gpa)}
+                            <span className="text-sm opacity-80">.{user.gpa.toString().split('.')[1]}</span>
+                        </span>
+                    </div>
                 </div>
-                <div className="mt-2 text-xs bg-white/20 inline-block px-2 py-1 rounded-lg">
+
+                <div className="mt-1 text-xs font-medium bg-black/20 px-3 py-1 rounded-full z-10 backdrop-blur-sm border border-white/10">
                     Rang: {user.rank}
                 </div>
-            </motion.button>
-
-            <motion.button 
-                onClick={onOpenCalendar}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ delay: 0.2 }}
-                className="bg-white dark:bg-surfaceDark p-5 rounded-3xl shadow-soft flex flex-col justify-between text-left group relative overflow-hidden ring-1 ring-transparent hover:ring-accent/20 transition-all duration-300"
-            >
-                {/* Background interaction hint */}
-                <div className="absolute inset-0 bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                <div className="flex justify-between items-start mb-2 w-full relative z-10">
-                    <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center text-accent group-hover:scale-110 transition-transform duration-300">
-                        <Sparkles size={20} />
-                    </div>
-                    {/* Navigation Arrow */}
-                    <div className="w-8 h-8 rounded-full bg-gray-50 dark:bg-white/5 flex items-center justify-center text-textSecLight dark:text-textSecDark opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-300">
-                        <ArrowRight size={16} />
-                    </div>
-                </div>
-                <div className="relative z-10">
-                    <p className="text-textSecLight dark:text-textSecDark text-xs font-medium">Prochain Cours</p>
-                    <p className="text-textMainLight dark:text-textMainDark font-bold text-lg leading-tight mt-1 group-hover:text-accent transition-colors duration-300">
-                        Algorithmique
-                    </p>
-                    <p className="text-accent text-xs mt-1 font-medium flex items-center gap-1">
-                        <span>Dans 35 min • Amphi B</span>
-                    </p>
+                <div className="absolute -bottom-6 -right-6 text-white/5 rotate-12 group-hover:rotate-0 transition-transform duration-500">
+                    <Trophy size={100} />
                 </div>
             </motion.button>
         </div>
+        
+        {/* Calendar Card (Full Width) */}
+        <motion.button 
+            onClick={onOpenCalendar}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ delay: 0.2 }}
+            className="w-full bg-white dark:bg-surfaceDark p-5 rounded-3xl shadow-soft flex flex-col justify-between text-left group relative overflow-hidden ring-1 ring-transparent hover:ring-accent/20 transition-all duration-300 min-h-[140px]"
+        >
+            <div className="absolute inset-0 bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+            <div className="flex justify-between items-start mb-2 w-full relative z-10">
+                <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center text-accent group-hover:scale-110 transition-transform duration-300">
+                    <Sparkles size={20} />
+                </div>
+                <div className="w-8 h-8 rounded-full bg-gray-50 dark:bg-white/5 flex items-center justify-center text-textSecLight dark:text-textSecDark opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-300">
+                    <ArrowRight size={16} />
+                </div>
+            </div>
+            <div className="relative z-10 mt-auto">
+                <p className="text-textSecLight dark:text-textSecDark text-xs font-medium">Prochain Cours</p>
+                <div className="flex justify-between items-end">
+                    <div>
+                        <p className="text-textMainLight dark:text-textMainDark font-bold text-lg leading-tight mt-1 group-hover:text-accent transition-colors duration-300 line-clamp-1">
+                            Algorithmique
+                        </p>
+                        <p className="text-accent text-xs mt-1.5 font-medium flex items-center gap-1">
+                            <Clock size={12} />
+                            <span>Dans 35 min • Amphi B</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </motion.button>
+
 
         {/* Important Announcement Banner */}
         <motion.div 
@@ -191,7 +264,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 
       </div>
 
-      {/* FAB Chat - Moved up to bottom-32 */}
+      {/* FAB Chat */}
       <motion.button
         onClick={onOpenChat}
         whileHover={{ scale: 1.05 }}

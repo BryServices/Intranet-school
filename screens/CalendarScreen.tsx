@@ -277,9 +277,6 @@ const CalendarScreen: React.FC = () => {
                                         <span className={`text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wide ${getTypeColor(course.type, 'bg')} ${getTypeColor(course.type, 'text')}`}>
                                             {course.type}
                                         </span>
-                                        <button className="text-gray-300 hover:text-primary transition-colors p-3 -mr-3 -mt-3">
-                                            <MoreVertical size={16} />
-                                        </button>
                                     </div>
                                     
                                     <h3 className="font-bold text-textMainLight dark:text-textMainDark text-[16px] mb-1 leading-tight">
