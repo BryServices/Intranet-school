@@ -21,6 +21,7 @@ const ANNOUNCEMENTS: Announcement[] = [
     id: '1',
     title: 'Remise des diplômes 2024',
     description: 'La cérémonie aura lieu le 15 Juillet au grand amphithéâtre. Inscriptions ouvertes.',
+    content: 'La cérémonie de remise des diplômes est un moment fort de la vie étudiante. Elle marque la fin de vos études et le début de votre vie professionnelle. Venez nombreux pour célébrer votre réussite avec vos proches et vos enseignants.',
     date: 'Hier',
     important: true,
     category: 'Événement'
@@ -29,6 +30,7 @@ const ANNOUNCEMENTS: Announcement[] = [
     id: '2',
     title: 'Maintenance Moodle',
     description: 'La plateforme de cours sera indisponible ce samedi de 22h à 02h.',
+    content: 'Une maintenance planifiée est prévue sur la plateforme Moodle. Veuillez prendre vos dispositions pour télécharger vos supports de cours avant la coupure.',
     date: 'Il y a 2h',
     important: false,
     category: 'Info'
@@ -37,6 +39,7 @@ const ANNOUNCEMENTS: Announcement[] = [
     id: '3',
     title: 'Club Robotique',
     description: 'Rejoignez-nous pour la coupe de France ! Première réunion Jeudi.',
+    content: 'Le club robotique organise sa première réunion de l\'année. Au programme : présentation des projets, constitution des équipes pour la coupe de France de robotique et ateliers d\'initiation.',
     date: 'Il y a 5h',
     important: false,
     category: 'Vie étudiante'
@@ -283,3 +286,4 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 };
 
 export default HomeScreen;
+    

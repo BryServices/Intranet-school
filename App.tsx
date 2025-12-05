@@ -12,10 +12,16 @@ import AnnouncementsScreen from './screens/AnnouncementsScreen';
 import StudentCardScreen from './screens/StudentCardScreen';
 import AbsencesScreen from './screens/AbsencesScreen';
 import AlertsScreen from './screens/AlertsScreen';
+import AdminDashboardScreen from './screens/AdminDashboardScreen';
+import AdminLoginScreen from './screens/AdminLoginScreen';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const MainLayout = () => {
   const { user } = useApp();
+  // 'none' = Student Login / App | 'login' = Admin Login Screen | 'dashboard' = Admin Dashboard
+  const [adminView, setAdminView] = useState<'none' | 'login' | 'dashboard'>('none');
+
+  // States for Student Layout
   const [currentTab, setCurrentTab] = useState('home');
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -24,10 +30,33 @@ const MainLayout = () => {
   const [isAbsencesOpen, setIsAbsencesOpen] = useState(false);
   const [isAlertsOpen, setIsAlertsOpen] = useState(false);
 
-  if (!user) {
-    return <LoginScreen />;
+  // View: Admin Flow
+  if (adminView === 'dashboard') {
+    return (
+        <AdminDashboardScreen onLogout={() => setAdminView('none')} />
+    );
   }
 
+  if (adminView === 'login') {
+    return (
+        <AdminLoginScreen 
+            onLoginSuccess={() => setAdminView('dashboard')} 
+            onBack={() => setAdminView('none')} 
+        />
+    );
+  }
+
+  // View: Login (if no user)
+  if (!user) {
+    return (
+      <LoginScreen 
+        onAdminLogin={() => setAdminView('login')} 
+        onAdminDashboard={() => setAdminView('dashboard')}
+      />
+    );
+  }
+
+  // View: Student App
   const renderContent = () => {
     switch (currentTab) {
       case 'home':
